@@ -5,20 +5,31 @@
     </div>
     <div v-show="window.innerWidth > 400">
       <div class="logo"><strong>Js84df</strong>-חברת</div>
-      <div class="Depart" v-if="Department.length > 0">
-        סך הכל מחלקות
-        <span
-          ><strong> {{ Department.length }}</strong></span
-        >
-      </div>
-      <div class="m" v-if="data2.length > 0">
-        סך הכל עובדים {{ data2.length }}
-      </div>
+      <el-dropdown
+        class="dropdown"
+        v-if="Department.length > 0 && data2.length > 0"
+      >
+        <span class="el-dropdown-link">
+          נתונים<i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item
+            ><div class="Depart">
+              סך הכל מחלקות
+              <span
+                ><strong> {{ Department.length }}</strong></span
+              >
+            </div></el-dropdown-item
+          >
+          <el-dropdown-item>
+            <div class="m">סך הכל עובדים {{ data2.length }}</div>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <el-badge value="3" class="icon" type="primary"> </el-badge>
+      <i class="el-icon-message-solid"></i>
       <div class="divshelemaala"></div>
       <div class="hazeshebatzad">
-        <!-- <el-row v-for="(n, i) in 13" :key="i" class="row">
-        <el-col :span="24">{{ `אפשרות-${n}` }}</el-col>
-      </el-row> -->
         <div @click="hosefOved">
           <el-row class="row">
             <el-col :span="24"><i class="el-icon-user"></i> הוסף עובד</el-col>
@@ -242,7 +253,7 @@ export default {
     let inp = this.$refs.inputo.$el.children[0];
     inp.style.background = "rgba(6, 178, 135, 0.788)";
     inp.style.color = "white";
-    inp.style.width = "334px";
+    inp.style.width = "384px";
     let res = await this.$ax.get(URL + "Getnetunim");
     // console.log(res.data);
     this.netunim = res.data;
@@ -370,7 +381,7 @@ body {
   width: 30%;
   position: absolute;
   left: 0;
-  top: 40px;
+  top: 81px;
   border: 0.4px solid black;
   padding: 3px;
   height: 80%;
@@ -381,11 +392,11 @@ body {
   display: none;
 }
 .input {
-  width: 250px;
-  background: rgba(0, 0, 0, 0.385);
+  width: 260px;
+  /* background: rgb(0, 0, 0); */
   position: absolute;
-  left: 205px;
-  top: 0;
+  left: 197px;
+  top: 40px;
   direction: rtl;
   z-index: 201;
 }
@@ -400,7 +411,7 @@ body {
 }
 .selctA {
   position: absolute;
-  top: 0;
+  top: 40px;
   left: 0;
   width: 120px;
   z-index: 201;
@@ -500,18 +511,18 @@ body {
   right: 120px;
 }
 .Depart {
-  position: absolute;
+  /* position: absolute;
   left: 520px;
-  top: 2px;
+  top: 2px; */
   z-index: 400;
   color: white;
   font-size: 25px;
 }
 .m {
   font-size: 25px;
-  position: absolute;
+  /* position: absolute;
   top: 2px;
-  right: 38%;
+  right: 38%; */
   z-index: 900;
   color: white;
 }
@@ -524,11 +535,49 @@ body {
 .logo {
   position: absolute;
   top: 0;
-  right: 14px;
+  right: 44px;
   color: white;
   z-index: 1000;
   font-size: 28px;
   border-bottom: 3px solid white;
+}
+.dropdown {
+  position: absolute;
+  top: 3px;
+  left: 35px;
+  color: white;
+  z-index: 1002;
+}
+.dropdown ::before {
+  position: relative;
+  left: 7px;
+}
+.el-dropdown-link {
+  color: white;
+  width: 200px;
+  font-size: 25px;
+}
+.el-dropdown-link:hover {
+  color: rgba(255, 255, 255, 0.652);
+  width: 210px;
+  font-size: 25px;
+}
+.el-dropdown-menu {
+  background: rgba(0, 0, 0, 0.79);
+}
+.el-icon-message-solid {
+  position: absolute;
+  top: 0;
+  right: 250px;
+  z-index: 468;
+  color: rgb(194, 194, 246);
+  font-size: 35px;
+}
+.icon {
+  position: absolute;
+  top: 0;
+  right: 230px;
+  z-index: 500;
 }
 </style>
 <style>
