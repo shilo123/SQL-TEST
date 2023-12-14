@@ -80,7 +80,7 @@
           ></el-option>
         </el-select>
       </div>
-      <el-table :data="data" class="table" stripe>
+      <el-table :data="data" class="table" stripe v-show="data.length > 0">
         <el-table-column label="מחיקה" v-if="mehika">
           <template slot-scope="scope">
             <el-button
@@ -98,7 +98,11 @@
         <el-table-column label="תפקיד" prop="Position"></el-table-column>
         <el-table-column label="מחלקה" prop="DepartmentName"></el-table-column>
       </el-table>
-      <el-table :data="netunim" class="tableNetunim">
+      <el-table
+        :data="netunim"
+        class="tableNetunim"
+        v-show="netunim.length > 0"
+      >
         <el-table-column label="סך הכל עובדים" prop="TOTAL"></el-table-column>
         <el-table-column
           label="שם המחלקה"
