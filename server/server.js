@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const cors = require("cors");
 let mongo = require("mongodb").MongoClient;
 const ObjectId = require("mongodb").ObjectId;
@@ -9,55 +9,56 @@ const fs = require("fs");
 const axios = require("axios");
 app.use(bodyParser.json());
 app.use(cors());
-const sql = require("mssql/msnodesqlv8");
+const sql = require("mssql");
 
 const config = {
-  // server: "MC58148\\SQLEXPRESS",
-  server: "34.41.107.10",
-  database: "newDB",
-  driver: "msnodesqlv8",
   user: "sqlserver",
   password: "Shilo#123",
+  server: "34.41.107.10",
+  database: "newDB",
+  options: {
+    trustServerCertificate: true,
+  },
 };
-function SQL(query) {
-  return new Promise((resolve, reject) => {
-    sql.connect(config, (err) => {
-      if (err) {
-        console.log("errrrrr:::", err);
-        return;
-      }
-      let request = new sql.Request();
-      request.query(query, (err, res) => {
-        if (err) {
-          // console.log("err1:", err);
-          reject(err);
-        } else {
-          const reso = res;
-          // console.log("res", res);
-          res = res.recordsets[0];
-          if (res) {
-            resolve(res);
-          } else {
-            resolve(reso);
-          }
-        }
-      });
-    });
-  });
+
+async function SQL(query) {
+  try {
+    await sql.connect(config);
+    const result = await sql.query(query);
+    return result.recordset;
+  } catch (err) {
+    console.error("SQL error:", err);
+    throw err;
+  } finally {
+    await sql.close();
+  }
 }
+
 async function nisuySQL(query) {
-  const res = await SQL(query);
-  console.log(res);
+  try {
+    const res = await SQL(query);
+    console.log(res);
+  } catch (err) {
+    console.error("Error running query:", err);
+  }
 }
-// let q = `SELECT * FROM ovdim`;
+
+// const q = `SELECT ovdim.EmployeeID ,ovdim.Name,ovdim.Position,Department.DepartmentName  FROM
+// ovdim JOIN Department ON ovdim.DepartmentID = Department.DepartmentID ORDER BY Department.DepartmentName
+// `;
 // nisuySQL(q);
 
 app.get("/", async (req, res) => {
-  const q = `SELECT ovdim.EmployeeID ,ovdim.Name,ovdim.Position,Department.DepartmentName  FROM 
-  ovdim JOIN Department ON ovdim.DepartmentID = Department.DepartmentID ORDER BY Department.DepartmentName
-  `;
-  const result = await SQL(q);
-  res.json(result);
+  try {
+    const q = `SELECT ovdim.EmployeeID ,ovdim.Name,ovdim.Position,Department.DepartmentName  FROM
+    ovdim JOIN Department ON ovdim.DepartmentID = Department.DepartmentID ORDER BY Department.DepartmentName
+    `;
+    const result = await SQL(q);
+    console.log({ resqo: result });
+    res.json(result);
+  } catch (error) {
+    res.json("ERROR");
+  }
 });
 app.get("/Getnetunim", async (req, res) => {
   const q = `SELECT COUNT(ovdim.Name) AS TOTAL,Department.DepartmentName FROM 
@@ -65,7 +66,6 @@ app.get("/Getnetunim", async (req, res) => {
   GROUP BY Department.DepartmentName ORDER BY Department.DepartmentName
   `;
   let result = await SQL(q);
-  // console.log(result);
   res.json(result);
 });
 app.get("/GetD", async (req, res) => {
