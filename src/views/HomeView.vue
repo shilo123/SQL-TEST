@@ -155,7 +155,13 @@
       <el-button type="success" class="butoon" @click="hosefOta"
         >הוסף</el-button
       >
-      <el-button type="danger" @click="showM = false" class="tze"
+      <el-button
+        type="danger"
+        @click="
+          showM = false;
+          shemhadash = '';
+        "
+        class="tze"
         >חזור</el-button
       >
       <div class="ze r">{{ shemhadash }}</div>
