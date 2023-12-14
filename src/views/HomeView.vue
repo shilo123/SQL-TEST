@@ -1,172 +1,177 @@
 <template>
   <div v-if="shomes">
-    <div class="Depart" v-if="Department.length > 0">
-      סך הכל מחלקות
-      <span
-        ><strong> {{ Department.length }}</strong></span
-      >
+    <div v-show="window.innerWidth < 400" class="onlyPhone">
+      אין תמיכה במובייל פתח מחשב!
     </div>
-    <div class="m" v-if="data2.length > 0">
-      סך הכל עובדים {{ data2.length }}
-    </div>
-    <div class="divshelemaala"></div>
-    <div class="hazeshebatzad">
-      <!-- <el-row v-for="(n, i) in 13" :key="i" class="row">
+    <div v-show="window.innerWidth > 400">
+      <div class="Depart" v-if="Department.length > 0">
+        סך הכל מחלקות
+        <span
+          ><strong> {{ Department.length }}</strong></span
+        >
+      </div>
+      <div class="m" v-if="data2.length > 0">
+        סך הכל עובדים {{ data2.length }}
+      </div>
+      <div class="divshelemaala"></div>
+      <div class="hazeshebatzad">
+        <!-- <el-row v-for="(n, i) in 13" :key="i" class="row">
         <el-col :span="24">{{ `אפשרות-${n}` }}</el-col>
       </el-row> -->
-      <div @click="hosefOved">
-        <el-row class="row">
-          <el-col :span="24"><i class="el-icon-user"></i> הוסף עובד</el-col>
-        </el-row>
-      </div>
-      <div @click="haserOved">
-        <el-row class="row">
-          <el-col :span="24"><i class="el-icon-delete"></i> הסר עובד</el-col>
-        </el-row>
-      </div>
-      <div @click="hosefMahlaka">
-        <el-row class="row">
-          <el-col :span="24">הוסף מחלקה</el-col>
-        </el-row>
-      </div>
-      <div v-if="mehika">
-        <el-row>
-          <el-col :span="24"
-            ><el-button
-              type="primary"
-              class="buttonOfBack"
-              @click="mehika = false"
-              >חזור</el-button
-            >
-          </el-col>
-        </el-row>
-      </div>
-
-      <div v-for="n in 7" :key="n">
-        <el-row class="row">
-          <el-col :span="24">{{ `סתם ליופי -${n}` }}</el-col>
-        </el-row>
-      </div>
-    </div>
-    <div>
-      <el-input
-        v-model="serch"
-        :placeholder="pleace"
-        class="input"
-        ref="inputo"
-      ></el-input>
-      <el-select v-model="selcto" placeholder="חפש לפי" class="selctA">
-        <el-option
-          v-for="(m, i) in ['שם עובד', 'תפקיד', 'מחלקה']"
-          :key="i"
-          :value="m"
-          :label="m"
-        ></el-option>
-      </el-select>
-    </div>
-    <el-table :data="data" class="table" stripe>
-      <el-table-column label="מחיקה" v-if="mehika">
-        <template slot-scope="scope">
-          <el-button
-            class="buttono"
-            :loading="loadingButton"
-            type="danger"
-            @click="DeleteUs(scope.row.EmployeeID)"
-            size="mini"
-            ><i class="el-icon-delete"></i
-          ></el-button>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="שם עובד" prop="Name"></el-table-column>
-      <el-table-column label="תפקיד" prop="Position"></el-table-column>
-      <el-table-column label="מחלקה" prop="DepartmentName"></el-table-column>
-    </el-table>
-    <el-table :data="netunim" class="tableNetunim">
-      <el-table-column label="סך הכל עובדים" prop="TOTAL"></el-table-column>
-      <el-table-column
-        label="שם המחלקה"
-        prop="DepartmentName"
-      ></el-table-column>
-    </el-table>
-    <div v-show="NewUser" class="theNew">
-      <div class="alltheinputs">
-        <div style="text-align: right; font-size: 20px; margin-bottom: 10px">
-          שם העובד:
+        <div @click="hosefOved">
+          <el-row class="row">
+            <el-col :span="24"><i class="el-icon-user"></i> הוסף עובד</el-col>
+          </el-row>
         </div>
+        <div @click="haserOved">
+          <el-row class="row">
+            <el-col :span="24"><i class="el-icon-delete"></i> הסר עובד</el-col>
+          </el-row>
+        </div>
+        <div @click="hosefMahlaka">
+          <el-row class="row">
+            <el-col :span="24">הוסף מחלקה</el-col>
+          </el-row>
+        </div>
+        <div v-if="mehika">
+          <el-row>
+            <el-col :span="24"
+              ><el-button
+                type="primary"
+                class="buttonOfBack"
+                @click="mehika = false"
+                >חזור</el-button
+              >
+            </el-col>
+          </el-row>
+        </div>
+
+        <div v-for="n in 7" :key="n">
+          <el-row class="row">
+            <el-col :span="24">{{ `סתם ליופי -${n}` }}</el-col>
+          </el-row>
+        </div>
+      </div>
+      <div>
         <el-input
-          style="width: 200px"
-          size="small"
-          v-model="ovedHadash.shem"
-          placeholder="שם העובד החדש"
-          class="ktzatSmall"
+          v-model="serch"
+          :placeholder="pleace"
+          class="input"
+          ref="inputo"
         ></el-input>
-        <div style="text-align: right; font-size: 20px; margin-bottom: 10px">
-          שם המחלקה:
-        </div>
-        <el-select
-          size="small"
-          v-model="ovedHadash.Department"
-          placeholder=""
-          class="selecto"
-        >
+        <el-select v-model="selcto" placeholder="חפש לפי" class="selctA">
           <el-option
-            v-for="(d, i) in Department"
+            v-for="(m, i) in ['שם עובד', 'תפקיד', 'מחלקה']"
             :key="i"
-            :value="d"
+            :value="m"
+            :label="m"
           ></el-option>
         </el-select>
-        <div style="text-align: right; font-size: 20px; margin-bottom: 10px">
-          תפקיד:
+      </div>
+      <el-table :data="data" class="table" stripe>
+        <el-table-column label="מחיקה" v-if="mehika">
+          <template slot-scope="scope">
+            <el-button
+              class="buttono"
+              :loading="loadingButton"
+              type="danger"
+              @click="DeleteUs(scope.row.EmployeeID)"
+              size="mini"
+              ><i class="el-icon-delete"></i
+            ></el-button>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="שם עובד" prop="Name"></el-table-column>
+        <el-table-column label="תפקיד" prop="Position"></el-table-column>
+        <el-table-column label="מחלקה" prop="DepartmentName"></el-table-column>
+      </el-table>
+      <el-table :data="netunim" class="tableNetunim">
+        <el-table-column label="סך הכל עובדים" prop="TOTAL"></el-table-column>
+        <el-table-column
+          label="שם המחלקה"
+          prop="DepartmentName"
+        ></el-table-column>
+      </el-table>
+      <div v-show="NewUser" class="theNew">
+        <div class="alltheinputs">
+          <div style="text-align: right; font-size: 20px; margin-bottom: 10px">
+            שם העובד:
+          </div>
+          <el-input
+            style="width: 200px"
+            size="small"
+            v-model="ovedHadash.shem"
+            placeholder="שם העובד החדש"
+            class="ktzatSmall"
+          ></el-input>
+          <div style="text-align: right; font-size: 20px; margin-bottom: 10px">
+            שם המחלקה:
+          </div>
+          <el-select
+            size="small"
+            v-model="ovedHadash.Department"
+            placeholder=""
+            class="selecto"
+          >
+            <el-option
+              v-for="(d, i) in Department"
+              :key="i"
+              :value="d"
+            ></el-option>
+          </el-select>
+          <div style="text-align: right; font-size: 20px; margin-bottom: 10px">
+            תפקיד:
+          </div>
+          <el-input
+            class="ktzatSmall"
+            style="width: 200px"
+            v-model="ovedHadash.position"
+            placeholder="תפקיד"
+            size="small"
+          ></el-input>
         </div>
+        <div class="pratim">
+          <div>
+            שם העובד :<span class="ze">{{ ovedHadash.shem }}</span>
+          </div>
+          <div>
+            שם המחלקה :<span class="ze">{{ ovedHadash.Department }}</span>
+          </div>
+          <div>
+            שם התפקיד :<span class="ze">{{ ovedHadash.position }}</span>
+          </div>
+        </div>
+        <div class="butons">
+          <el-button type="success" @click="AddOved">שמור</el-button>
+          <el-button type="danger" @click="NewUser = false">צא</el-button>
+        </div>
+      </div>
+      <div class="AddMahlaka" v-show="showM">
+        <div style="text-align: right">שם המחלקה החדש:</div>
+        <br />
         <el-input
-          class="ktzatSmall"
-          style="width: 200px"
-          v-model="ovedHadash.position"
-          placeholder="תפקיד"
-          size="small"
+          v-model="shemhadash"
+          placeholder="שם המחלקה החדשה"
+          style="width: 60%"
+          class="inputicatica"
         ></el-input>
+        <el-button type="success" class="butoon" @click="hosefOta"
+          >הוסף</el-button
+        >
+        <el-button
+          type="danger"
+          @click="
+            showM = false;
+            shemhadash = '';
+          "
+          class="tze"
+          >חזור</el-button
+        >
+        <div class="ze r">{{ shemhadash }}</div>
       </div>
-      <div class="pratim">
-        <div>
-          שם העובד :<span class="ze">{{ ovedHadash.shem }}</span>
-        </div>
-        <div>
-          שם המחלקה :<span class="ze">{{ ovedHadash.Department }}</span>
-        </div>
-        <div>
-          שם התפקיד :<span class="ze">{{ ovedHadash.position }}</span>
-        </div>
-      </div>
-      <div class="butons">
-        <el-button type="success" @click="AddOved">שמור</el-button>
-        <el-button type="danger" @click="NewUser = false">צא</el-button>
-      </div>
+      <div class="hazeshemehase" v-if="mehika"></div>
     </div>
-    <div class="AddMahlaka" v-show="showM">
-      <div style="text-align: right">שם המחלקה החדש:</div>
-      <br />
-      <el-input
-        v-model="shemhadash"
-        placeholder="שם המחלקה החדשה"
-        style="width: 60%"
-        class="inputicatica"
-      ></el-input>
-      <el-button type="success" class="butoon" @click="hosefOta"
-        >הוסף</el-button
-      >
-      <el-button
-        type="danger"
-        @click="
-          showM = false;
-          shemhadash = '';
-        "
-        class="tze"
-        >חזור</el-button
-      >
-      <div class="ze r">{{ shemhadash }}</div>
-    </div>
-    <div class="hazeshemehase" v-if="mehika"></div>
   </div>
 </template>
 <script>
@@ -174,6 +179,7 @@ import { URL } from "@/URL/url";
 export default {
   data() {
     return {
+      window,
       NewUser: false,
       data: [],
       data2: [],
@@ -496,6 +502,12 @@ body {
   left: 31%;
   z-index: 900;
   color: white;
+}
+.onlyPhone {
+  font-size: 50px;
+  position: absolute;
+  top: 220px;
+  left: 70px;
 }
 </style>
 <style>
