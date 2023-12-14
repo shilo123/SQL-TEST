@@ -461,11 +461,11 @@ body {
 }
 .AddMahlaka {
   background: rgba(9, 183, 163, 0.836);
-  width: 454px;
+  width: 394px;
   height: 120px;
   position: absolute;
   top: 45px;
-  right: 13.4%;
+  right: 16.4%;
   border-radius: 30px;
   padding: 20px;
 }
@@ -489,7 +489,7 @@ body {
 }
 .inputicatica {
   position: relative;
-  left: 200px;
+  left: 150px;
 }
 .r {
   position: relative;
@@ -508,7 +508,7 @@ body {
 .tze {
   position: absolute;
   top: 0;
-  right: 120px;
+  right: 220px;
 }
 .Depart {
   /* position: absolute;
