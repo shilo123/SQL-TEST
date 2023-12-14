@@ -143,7 +143,9 @@
           </div>
         </div>
         <div class="butons">
-          <el-button type="success" @click="AddOved">שמור</el-button>
+          <el-button type="success" @click="AddOved" :loading="loadingButton"
+            >שמור</el-button
+          >
           <el-button type="danger" @click="NewUser = false">צא</el-button>
         </div>
       </div>
@@ -255,10 +257,12 @@ export default {
         this.ovedHadash.Department &&
         this.ovedHadash.position
       ) {
+        this.loadingButton = true;
         let { data } = await this.$ax.post(URL + "AddOved", this.ovedHadash);
         console.log(data);
         if (data) {
           this.$message.success("העובד נוסף בהצלחה");
+          this.loadingButton = false;
           window.location.reload();
         } else {
           this.$message.error("משהו נכשל נסה שוב");
