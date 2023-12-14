@@ -4,6 +4,7 @@
       אין תמיכה במובייל פתח מחשב!
     </div>
     <div v-show="window.innerWidth > 400">
+      <div class="logo"><strong>Js84df</strong>-חברת</div>
       <div class="Depart" v-if="Department.length > 0">
         סך הכל מחלקות
         <span
@@ -158,7 +159,11 @@
           style="width: 60%"
           class="inputicatica"
         ></el-input>
-        <el-button type="success" class="butoon" @click="hosefOta"
+        <el-button
+          type="success"
+          class="butoon"
+          @click="hosefOta"
+          :loading="loadingButton"
           >הוסף</el-button
         >
         <el-button
@@ -305,11 +310,13 @@ export default {
     async hosefOta() {
       // console.log(this.Department.includes(this.shemhadash));
       if (this.shemhadash && !this.Department.includes(this.shemhadash)) {
+        this.loadingButton = true;
         const { data } = await this.$ax.post(URL + "AddDepartment", {
           newP: this.shemhadash,
         });
 
         if (data) {
+          this.loadingButton = false;
           this.$message.success("נוספה בהצלחה");
 
           setTimeout(() => {
@@ -361,7 +368,7 @@ body {
 .table {
   width: 30%;
   position: absolute;
-  right: 24.2%;
+  right: 0;
   top: 40px;
   border: 0.4px solid black;
   padding: 3px;
@@ -376,7 +383,7 @@ body {
   width: 250px;
   background: rgba(0, 0, 0, 0.385);
   position: absolute;
-  right: 371px;
+  right: 0;
   top: 0;
   direction: rtl;
   z-index: 201;
@@ -393,14 +400,14 @@ body {
 .selctA {
   position: absolute;
   top: 0;
-  right: 704px;
+  right: 335px;
   width: 120px;
   z-index: 201;
 }
 .tableNetunim {
   width: 24%;
   position: absolute;
-  right: 0;
+  right: 374px;
   top: 40px;
 }
 .theNew {
@@ -493,7 +500,7 @@ body {
 }
 .Depart {
   position: absolute;
-  right: 100px;
+  right: 520px;
   top: 2px;
   z-index: 400;
   color: white;
@@ -503,7 +510,7 @@ body {
   font-size: 25px;
   position: absolute;
   top: 2px;
-  left: 31%;
+  left: 38%;
   z-index: 900;
   color: white;
 }
@@ -512,6 +519,15 @@ body {
   position: absolute;
   top: 220px;
   left: 70px;
+}
+.logo {
+  position: absolute;
+  top: 0;
+  left: 14px;
+  color: white;
+  z-index: 1000;
+  font-size: 28px;
+  border-bottom: 3px solid white;
 }
 </style>
 <style>
