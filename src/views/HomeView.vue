@@ -360,15 +360,16 @@ body {
 .hazeshebatzad {
   position: absolute;
   top: 40px;
-  left: 0;
+  right: 0;
   background: rgb(57, 158, 198);
-  width: 200px;
+  width: 230px;
   height: 130%;
+  padding: 5px;
 }
 .table {
   width: 30%;
   position: absolute;
-  right: 0;
+  left: 0;
   top: 40px;
   border: 0.4px solid black;
   padding: 3px;
@@ -383,7 +384,7 @@ body {
   width: 250px;
   background: rgba(0, 0, 0, 0.385);
   position: absolute;
-  right: 0;
+  left: 205px;
   top: 0;
   direction: rtl;
   z-index: 201;
@@ -400,14 +401,14 @@ body {
 .selctA {
   position: absolute;
   top: 0;
-  right: 335px;
+  left: 0;
   width: 120px;
   z-index: 201;
 }
 .tableNetunim {
   width: 24%;
   position: absolute;
-  right: 374px;
+  left: 459px;
   top: 40px;
 }
 .theNew {
@@ -418,7 +419,7 @@ body {
   top: 43px;
   border-radius: 20px;
   transition: left;
-  left: 25.4%;
+  right: 25.4%;
   padding: 10px;
 }
 .alltheinputs {
@@ -453,7 +454,7 @@ body {
   height: 120px;
   position: absolute;
   top: 45px;
-  left: 13.4%;
+  right: 13.4%;
   border-radius: 30px;
   padding: 20px;
 }
@@ -496,11 +497,11 @@ body {
 .tze {
   position: absolute;
   top: 0;
-  left: 120px;
+  right: 120px;
 }
 .Depart {
   position: absolute;
-  right: 520px;
+  left: 520px;
   top: 2px;
   z-index: 400;
   color: white;
@@ -510,7 +511,7 @@ body {
   font-size: 25px;
   position: absolute;
   top: 2px;
-  left: 38%;
+  right: 38%;
   z-index: 900;
   color: white;
 }
@@ -523,7 +524,7 @@ body {
 .logo {
   position: absolute;
   top: 0;
-  left: 14px;
+  right: 14px;
   color: white;
   z-index: 1000;
   font-size: 28px;
