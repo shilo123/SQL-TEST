@@ -6,6 +6,9 @@
         ><strong> {{ Department.length }}</strong></span
       >
     </div>
+    <div class="m" v-if="data2.length > 0">
+      סך הכל עובדים {{ data2.length }}
+    </div>
     <div class="divshelemaala"></div>
     <div class="hazeshebatzad">
       <!-- <el-row v-for="(n, i) in 13" :key="i" class="row">
@@ -475,10 +478,18 @@ body {
 .Depart {
   position: absolute;
   right: 100px;
-  top: 0;
+  top: 2px;
   z-index: 400;
   color: white;
   font-size: 25px;
+}
+.m {
+  font-size: 25px;
+  position: absolute;
+  top: 2px;
+  left: 31%;
+  z-index: 900;
+  color: white;
 }
 </style>
 <style>
