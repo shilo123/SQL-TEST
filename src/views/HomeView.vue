@@ -1,5 +1,20 @@
 <template>
-  <div v-if="shomes">
+  <!-- v-show="shomes" -->
+  <div
+    v-loading="!shomes"
+    element-loading-text="Loading..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+    "
+    ref="DIVOS"
+  >
     <div v-show="window.innerWidth < 400" class="onlyPhone">
       אין תמיכה במובייל פתח מחשב!
     </div>
@@ -108,6 +123,7 @@
           label="שם המחלקה"
           prop="DepartmentName"
         ></el-table-column>
+        <el-table-column label="מנהל מחלקה" prop="Manger"></el-table-column>
       </el-table>
       <div v-show="NewUser" class="theNew">
         <div class="alltheinputs">
@@ -218,7 +234,7 @@ export default {
       loadingButton: false,
       shemhadash: "",
       showM: false,
-      shomes: true,
+      shomes: false,
     };
   },
   watch: {
@@ -261,9 +277,13 @@ export default {
     let res = await this.$ax.get(URL + "Getnetunim");
     // console.log(res.data);
     this.netunim = res.data;
+    this.shomes = true;
+    this.$refs.DIVOS.style.zIndex = "";
+
     let D = await this.$ax.get(URL + "GetD");
     // console.log(D.data);
     this.Department = D.data;
+    // this.$refs.DIVOS.style.position = "relative";
   },
 
   methods: {
@@ -371,6 +391,7 @@ body {
   background: rgb(130, 114, 114);
   color: coral;
   border-radius: 30px;
+  font-size: 20px;
 }
 .hazeshebatzad {
   position: absolute;
