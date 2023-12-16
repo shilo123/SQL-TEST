@@ -146,7 +146,14 @@
     <div class="ZeYafe" v-if="showZeYafe">
       <transition appear name="expand">
         <div class="inZeYafe">
-          <i class="el-icon-close" @click="showZeYafe = false"></i>
+          <i
+            class="el-icon-close"
+            @click="
+              showZeYafe = false;
+              showM = false;
+              showN = false;
+            "
+          ></i>
           <div v-show="NewUser && showZeYafe" class="theNew">
             <div class="alltheinputs">
               <div
@@ -256,7 +263,7 @@
           <el-table
             :data="netunim"
             class="tableNetunim"
-            v-show="netunim.length > 0 && showN"
+            v-show="netunim.length > 0 && showN && showZeYafe"
           >
             <el-table-column
               label="סך הכל עובדים"
@@ -333,6 +340,24 @@ export default {
         this.data = this.data2;
       }
     },
+    NewUser(val) {
+      if (val) {
+        this.showM = false;
+        this.showN = false;
+      }
+    },
+    showM(val) {
+      if (val) {
+        this.NewUser = false;
+        this.showN = false;
+      }
+    },
+    showN(val) {
+      if (val) {
+        this.NewUser = false;
+        this.showM = false;
+      }
+    },
   },
   computed: {
     pleace() {
@@ -375,6 +400,7 @@ export default {
     hosefOved() {
       this.NewUser = true;
       this.showM = false;
+      this.showN = false;
       this.showZeYafe = true;
     },
     async AddOved() {
@@ -746,6 +772,20 @@ body {
     transform: scale(1);
   }
 }
+.expand-leave-active {
+  animation: swirlOut 1s;
+}
+@keyframes swirlOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
 .el-icon-close {
   position: absolute;
   top: 0;
