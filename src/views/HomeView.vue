@@ -57,7 +57,7 @@
         </div>
         <div @click="hosefMahlaka">
           <el-row class="row">
-            <el-col :span="24">הוסף מחלקה</el-col>
+            <el-col :span="24"><i class="el-icon-top"></i> הוסף מחלקה</el-col>
           </el-row>
         </div>
         <div v-if="mehika">
@@ -72,8 +72,19 @@
             </el-col>
           </el-row>
         </div>
-
-        <div v-for="n in 7" :key="n">
+        <div
+          @click="
+            showN = true;
+            showZeYafe = true;
+          "
+        >
+          <el-row class="row">
+            <el-col :span="24"
+              ><i class="el-icon-s-order"></i> סטטוס מחלקות</el-col
+            >
+          </el-row>
+        </div>
+        <div v-for="n in 7" :key="n" @click="showZeYafe = true">
           <el-row class="row">
             <el-col :span="24">{{ `סתם ליופי -${n}` }}</el-col>
           </el-row>
@@ -86,7 +97,12 @@
           class="input"
           ref="inputo"
         ></el-input>
-        <el-select v-model="selcto" placeholder="חפש לפי" class="selctA">
+        <el-select
+          v-model="selcto"
+          placeholder="חפש לפי"
+          class="selctA"
+          ref="selctA"
+        >
           <el-option
             v-for="(m, i) in ['שם עובד', 'תפקיד', 'מחלקה']"
             :key="i"
@@ -94,8 +110,23 @@
             :label="m"
           ></el-option>
         </el-select>
+        <el-select
+          v-model="filterDeparment"
+          placeholder="בחר מחלקה"
+          class="selectB"
+        >
+          <el-option
+            v-for="(sq, i) in Department"
+            :key="i"
+            :value="sq"
+          ></el-option>
+          <el-option value="הכל"></el-option>
+        </el-select>
       </div>
       <el-table :data="data" class="table" stripe v-show="data.length > 0">
+        <el-table-column label="שם עובד" prop="Name"></el-table-column>
+        <el-table-column label="תפקיד" prop="Position"></el-table-column>
+        <el-table-column label="מחלקה" prop="DepartmentName"></el-table-column>
         <el-table-column label="מחיקה" v-if="mehika">
           <template slot-scope="scope">
             <el-button
@@ -108,107 +139,137 @@
             ></el-button>
           </template>
         </el-table-column>
-
-        <el-table-column label="שם עובד" prop="Name"></el-table-column>
-        <el-table-column label="תפקיד" prop="Position"></el-table-column>
-        <el-table-column label="מחלקה" prop="DepartmentName"></el-table-column>
       </el-table>
-      <el-table
-        :data="netunim"
-        class="tableNetunim"
-        v-show="netunim.length > 0"
-      >
-        <el-table-column label="סך הכל עובדים" prop="TOTAL"></el-table-column>
-        <el-table-column
-          label="שם המחלקה"
-          prop="DepartmentName"
-        ></el-table-column>
-        <el-table-column label="מנהל מחלקה" prop="Manger"></el-table-column>
-      </el-table>
-      <div v-show="NewUser" class="theNew">
-        <div class="alltheinputs">
-          <div style="text-align: right; font-size: 20px; margin-bottom: 10px">
-            שם העובד:
-          </div>
-          <el-input
-            style="width: 200px"
-            size="small"
-            v-model="ovedHadash.shem"
-            placeholder="שם העובד החדש"
-            class="ktzatSmall"
-          ></el-input>
-          <div style="text-align: right; font-size: 20px; margin-bottom: 10px">
-            שם המחלקה:
-          </div>
-          <el-select
-            size="small"
-            v-model="ovedHadash.Department"
-            placeholder=""
-            class="selecto"
-          >
-            <el-option
-              v-for="(d, i) in Department"
-              :key="i"
-              :value="d"
-            ></el-option>
-          </el-select>
-          <div style="text-align: right; font-size: 20px; margin-bottom: 10px">
-            תפקיד:
-          </div>
-          <el-input
-            class="ktzatSmall"
-            style="width: 200px"
-            v-model="ovedHadash.position"
-            placeholder="תפקיד"
-            size="small"
-          ></el-input>
-        </div>
-        <div class="pratim">
-          <div>
-            שם העובד :<span class="ze">{{ ovedHadash.shem }}</span>
-          </div>
-          <div>
-            שם המחלקה :<span class="ze">{{ ovedHadash.Department }}</span>
-          </div>
-          <div>
-            שם התפקיד :<span class="ze">{{ ovedHadash.position }}</span>
-          </div>
-        </div>
-        <div class="butons">
-          <el-button type="success" @click="AddOved" :loading="loadingButton"
-            >שמור</el-button
-          >
-          <el-button type="danger" @click="NewUser = false">צא</el-button>
-        </div>
-      </div>
-      <div class="AddMahlaka" v-show="showM">
-        <div style="text-align: right">שם המחלקה החדש:</div>
-        <br />
-        <el-input
-          v-model="shemhadash"
-          placeholder="שם המחלקה החדשה"
-          style="width: 60%"
-          class="inputicatica"
-        ></el-input>
-        <el-button
-          type="success"
-          class="butoon"
-          @click="hosefOta"
-          :loading="loadingButton"
-          >הוסף</el-button
-        >
-        <el-button
-          type="danger"
-          @click="
-            showM = false;
-            shemhadash = '';
-          "
-          class="tze"
-          >חזור</el-button
-        >
-        <div class="ze r">{{ shemhadash }}</div>
-      </div>
       <div class="hazeshemehase" v-if="mehika"></div>
+    </div>
+
+    <div class="ZeYafe" v-if="showZeYafe">
+      <transition appear name="expand">
+        <div class="inZeYafe">
+          <i class="el-icon-close" @click="showZeYafe = false"></i>
+          <div v-show="NewUser && showZeYafe" class="theNew">
+            <div class="alltheinputs">
+              <div
+                style="text-align: right; font-size: 20px; margin-bottom: 10px"
+              >
+                שם העובד:
+              </div>
+              <el-input
+                style="width: 200px"
+                size="small"
+                v-model="ovedHadash.shem"
+                placeholder="שם העובד החדש"
+                class="ktzatSmall"
+              ></el-input>
+              <div
+                style="text-align: right; font-size: 20px; margin-bottom: 10px"
+              >
+                שם המחלקה:
+              </div>
+              <el-select
+                size="small"
+                v-model="ovedHadash.Department"
+                placeholder=""
+                class="selecto"
+              >
+                <el-option
+                  v-for="(d, i) in Department"
+                  :key="i"
+                  :value="d"
+                ></el-option>
+              </el-select>
+              <div
+                style="text-align: right; font-size: 20px; margin-bottom: 10px"
+              >
+                תפקיד:
+              </div>
+              <el-input
+                class="ktzatSmall"
+                style="width: 200px"
+                v-model="ovedHadash.position"
+                placeholder="תפקיד"
+                size="small"
+              ></el-input>
+            </div>
+            <div class="pratim">
+              <div>
+                שם העובד :<span class="ze">{{ ovedHadash.shem }}</span>
+              </div>
+              <div>
+                שם המחלקה :<span class="ze">{{ ovedHadash.Department }}</span>
+              </div>
+              <div>
+                שם התפקיד :<span class="ze">{{ ovedHadash.position }}</span>
+              </div>
+            </div>
+            <div class="butons">
+              <el-button
+                type="success"
+                @click="AddOved"
+                :loading="loadingButton"
+                >שמור</el-button
+              >
+              <el-button
+                type="danger"
+                @click="
+                  NewUser = false;
+                  showZeYafe = false;
+                "
+                >צא</el-button
+              >
+            </div>
+          </div>
+          <div class="AddMahlaka" v-show="showM && showZeYafe">
+            <div style="text-align: right">שם המחלקה החדש:</div>
+            <br />
+            <el-input
+              v-model="shemhadash"
+              placeholder="שם המחלקה החדשה"
+              style="width: 60%"
+              class="inputicatica"
+            ></el-input>
+            <el-button
+              type="success"
+              class="butoon"
+              @click="hosefOta"
+              :loading="loadingButton"
+              >הוסף</el-button
+            >
+            <el-button
+              type="danger"
+              @click="
+                showM = false;
+                shemhadash = '';
+                showZeYafe = false;
+              "
+              class="tze"
+              >חזור</el-button
+            >
+            <div class="ze r">{{ shemhadash }}</div>
+            <div class="smotDEPARTMENT">
+              <div class="smotDEPARTMENTtitle">כל המחלקות</div>
+              <div class="depart-item" v-for="(d, i) in Department" :key="i">
+                {{ d }}
+              </div>
+            </div>
+          </div>
+          <el-table
+            :data="netunim"
+            class="tableNetunim"
+            v-show="netunim.length > 0 && showN"
+          >
+            <el-table-column
+              label="סך הכל עובדים"
+              prop="TOTAL"
+            ></el-table-column>
+            <el-table-column
+              label="שם המחלקה"
+              prop="DepartmentName"
+            ></el-table-column>
+            <el-table-column label="מנהל מחלקה" prop="Manger"></el-table-column>
+          </el-table>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -230,11 +291,14 @@ export default {
         position: "",
       },
       Department: [],
+      filterDeparment: "הכל",
       mehika: false,
       loadingButton: false,
       shemhadash: "",
       showM: false,
+      showZeYafe: false,
       shomes: false,
+      showN: false,
     };
   },
   watch: {
@@ -257,6 +321,16 @@ export default {
       }
       if (val === "") {
         this.data = this.data2;
+        this.filterDeparmentMET(this.filterDeparment);
+      }
+    },
+    filterDeparment(val) {
+      this.data = this.data2;
+      this.data = this.data.filter((e) => {
+        return e.DepartmentName === val;
+      });
+      if (val === "" || val === "הכל") {
+        this.data = this.data2;
       }
     },
   },
@@ -273,23 +347,35 @@ export default {
     let inp = this.$refs.inputo.$el.children[0];
     inp.style.background = "rgba(6, 178, 135, 0.788)";
     inp.style.color = "white";
-    inp.style.width = "384px";
+    // inp.style.width = "384px";
+    inp.style.width = "40%";
+    inp.style.position = "absolute";
+    inp.style.left = "584px";
+    let selc = this.$refs.selctA.$el.children[0].children[0];
+    selc.style.background = "rgba(255, 238, 225, 0.663)";
     let res = await this.$ax.get(URL + "Getnetunim");
-    // console.log(res.data);
     this.netunim = res.data;
     this.shomes = true;
     this.$refs.DIVOS.style.zIndex = "";
 
     let D = await this.$ax.get(URL + "GetD");
-    // console.log(D.data);
     this.Department = D.data;
-    // this.$refs.DIVOS.style.position = "relative";
   },
 
   methods: {
+    filterDeparmentMET(val) {
+      this.data = this.data2;
+      this.data = this.data.filter((e) => {
+        return e.DepartmentName === val;
+      });
+      if (val === "" || val === "הכל") {
+        this.data = this.data2;
+      }
+    },
     hosefOved() {
       this.NewUser = true;
       this.showM = false;
+      this.showZeYafe = true;
     },
     async AddOved() {
       if (
@@ -341,6 +427,7 @@ export default {
     hosefMahlaka() {
       this.showM = true;
       this.NewUser = false;
+      this.showZeYafe = true;
     },
     async hosefOta() {
       // console.log(this.Department.includes(this.shemhadash));
@@ -373,7 +460,7 @@ export default {
 </script>
 <style scoped>
 body {
-  background: rgba(6, 178, 135, 0.788);
+  background: rgba(255, 238, 225, 0.663);
 }
 .row {
   margin-bottom: 6px;
@@ -403,13 +490,14 @@ body {
   padding: 5px;
 }
 .table {
-  width: 30%;
+  width: 84.3%;
+  /* width: 30%; */
   position: absolute;
   left: 0;
   top: 81px;
   border: 0.4px solid black;
   padding: 3px;
-  height: 80%;
+  height: 88%;
   overflow: auto;
   z-index: 305;
 }
@@ -417,10 +505,11 @@ body {
   display: none;
 }
 .input {
-  width: 260px;
+  /* width: 1500px; */
+  /* width: 70%; */
   /* background: rgb(0, 0, 0); */
   position: absolute;
-  left: 197px;
+  left: 97px;
   top: 40px;
   direction: rtl;
   z-index: 201;
@@ -437,26 +526,34 @@ body {
 .selctA {
   position: absolute;
   top: 40px;
-  left: 0;
-  width: 120px;
+  left: 37%;
+  width: 113px;
   z-index: 201;
 }
-.tableNetunim {
-  width: 24%;
+.selectB {
   position: absolute;
-  left: 459px;
   top: 40px;
+  width: 37%;
+}
+.tableNetunim {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 .theNew {
-  width: 280px;
-  min-height: 380px;
+  width: 580px;
+  /* width: 280px; */
+  /* min-height: 380px; */
+  min-height: 390px;
   background: rgba(56, 29, 155, 0.729);
   position: absolute;
-  top: 43px;
+  top: 0;
   border-radius: 20px;
-  transition: left;
-  right: 25.4%;
+  left: 0;
   padding: 10px;
+  z-index: 1202;
 }
 .alltheinputs {
   position: relative;
@@ -473,8 +570,7 @@ body {
 }
 .butons {
   position: relative;
-  top: 50px;
-  float: right;
+  float: left;
 }
 .selecto {
   position: relative;
@@ -486,13 +582,30 @@ body {
 }
 .AddMahlaka {
   background: rgba(9, 183, 163, 0.836);
-  width: 394px;
-  height: 120px;
+  width: 560px;
+  height: 370px;
   position: absolute;
-  top: 45px;
-  right: 16.4%;
-  border-radius: 30px;
+  top: 0;
+  right: 0;
+  /* top: 45px;
+  right: 16.4%; */
+  border-radius: 10px;
   padding: 20px;
+}
+.smotDEPARTMENTtitle {
+  text-align: center;
+  font-size: 30px;
+  border-bottom: 3px solid black;
+}
+.smotDEPARTMENT {
+  position: relative;
+  top: 33px;
+  float: right;
+}
+.depart-item {
+  margin-bottom: 10px;
+  border-right: 8px solid red;
+  font-size: 25px;
 }
 .divshelemaala {
   background: rgba(0, 0, 0, 0.81);
@@ -526,14 +639,15 @@ body {
 }
 .butoon {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 160px;
+  top: 14%;
+  left: 2%;
+  width: 150px;
+  height: 40px;
 }
 .tze {
   position: absolute;
-  top: 0;
-  right: 220px;
+  bottom: 0;
+  left: 0;
 }
 .Depart {
   /* position: absolute;
@@ -603,6 +717,45 @@ body {
   top: 0;
   right: 230px;
   z-index: 500;
+}
+.ZeYafe {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.708);
+  z-index: 1200;
+}
+.inZeYafe {
+  width: 600px;
+  height: 410px;
+  background: rgb(255, 255, 255);
+  position: absolute;
+  left: 30%;
+  top: 20%;
+}
+.expand-enter-active {
+  animation: expandAnimation 2s;
+}
+@keyframes expandAnimation {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.el-icon-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 20px;
+  z-index: 1500;
+}
+.el-icon-close:hover {
+  background: rgb(176, 157, 157);
+  cursor: pointer;
 }
 </style>
 <style>
