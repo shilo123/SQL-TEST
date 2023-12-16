@@ -15,10 +15,16 @@
     "
     ref="DIVOS"
   >
-    <div v-show="window.innerWidth < 400" class="onlyPhone">
-      אין תמיכה במובייל פתח מחשב!
-    </div>
-    <div v-show="window.innerWidth > 400">
+    <i class="el-icon-s-fold" @click="drawer = true"></i>
+
+    <el-input
+      v-model="serch"
+      :placeholder="pleace"
+      class="inpOnlyPhone"
+      v-show="window.innerWidth <= 400"
+    ></el-input>
+    <!-- v-show="true" -->
+    <div>
       <div class="logo"><strong>Js84df</strong>-חברת</div>
       <el-dropdown
         class="dropdown"
@@ -278,6 +284,55 @@
         </div>
       </transition>
     </div>
+    <el-drawer title="אפשרויות" :visible.sync="drawer" size="50%" class="draw">
+      <div class="hazeshebatzadOFphone">
+        <div @click="hosefOved">
+          <el-row class="row">
+            <el-col :span="24"><i class="el-icon-user"></i> הוסף עובד</el-col>
+          </el-row>
+        </div>
+        <div @click="haserOved">
+          <el-row class="row">
+            <el-col :span="24"><i class="el-icon-delete"></i> הסר עובד</el-col>
+          </el-row>
+        </div>
+        <div @click="hosefMahlaka">
+          <el-row class="row">
+            <el-col :span="24"><i class="el-icon-top"></i> הוסף מחלקה</el-col>
+          </el-row>
+        </div>
+        <div v-if="mehika">
+          <el-row>
+            <el-col :span="24"
+              ><el-button
+                type="primary"
+                class="buttonOfBack"
+                @click="mehika = false"
+                >חזור</el-button
+              >
+            </el-col>
+          </el-row>
+        </div>
+        <div
+          @click="
+            showN = true;
+            showZeYafe = true;
+            drawer = false;
+          "
+        >
+          <el-row class="row">
+            <el-col :span="24"
+              ><i class="el-icon-s-order"></i> סטטוס מחלקות</el-col
+            >
+          </el-row>
+        </div>
+        <div v-for="n in 7" :key="n" @click="showZeYafe = true">
+          <el-row class="row">
+            <el-col :span="24">{{ `סתם ליופי -${n}` }}</el-col>
+          </el-row>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 <script>
@@ -306,6 +361,7 @@ export default {
       showZeYafe: false,
       shomes: false,
       showN: false,
+      drawer: false,
     };
   },
   watch: {
@@ -372,19 +428,21 @@ export default {
     let inp = this.$refs.inputo.$el.children[0];
     inp.style.background = "rgba(6, 178, 135, 0.788)";
     inp.style.color = "white";
-    // inp.style.width = "384px";
     inp.style.width = "40%";
     inp.style.position = "absolute";
-    inp.style.left = "584px";
+    inp.style.left = "587px";
     let selc = this.$refs.selctA.$el.children[0].children[0];
     selc.style.background = "rgba(255, 238, 225, 0.663)";
     let res = await this.$ax.get(URL + "Getnetunim");
     this.netunim = res.data;
     this.shomes = true;
     this.$refs.DIVOS.style.zIndex = "";
+    this.$refs.DIVOS.style.position = "absolute";
 
     let D = await this.$ax.get(URL + "GetD");
     this.Department = D.data;
+    let ele = document.querySelector(".v-model");
+    console.log(ele);
   },
 
   methods: {
@@ -398,6 +456,7 @@ export default {
       }
     },
     hosefOved() {
+      this.drawer = false;
       this.NewUser = true;
       this.showM = false;
       this.showN = false;
@@ -434,6 +493,8 @@ export default {
       // },
     },
     haserOved() {
+      this.drawer = false;
+
       this.mehika = true;
     },
     async DeleteUs(id) {
@@ -451,6 +512,8 @@ export default {
       }
     },
     hosefMahlaka() {
+      this.drawer = false;
+
       this.showM = true;
       this.NewUser = false;
       this.showZeYafe = true;
@@ -535,7 +598,7 @@ body {
   /* width: 70%; */
   /* background: rgb(0, 0, 0); */
   position: absolute;
-  left: 97px;
+  left: 94px;
   top: 40px;
   direction: rtl;
   z-index: 201;
@@ -785,7 +848,6 @@ body {
     transform: scale(0);
   }
 }
-
 .el-icon-close {
   position: absolute;
   top: 0;
@@ -797,11 +859,83 @@ body {
   background: rgb(176, 157, 157);
   cursor: pointer;
 }
+.hazeshebatzadOFphone {
+  display: none;
+}
+.el-icon-s-fold {
+  display: none;
+}
+.inpOnlyPhone {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 270px;
+}
+@media screen and (max-width: 400px) {
+  .hazeshebatzad {
+    display: none;
+  }
+  .hazeshebatzadOFphone {
+    display: inline;
+  }
+  .row {
+    border-bottom: 3px solid black;
+  }
+  .logo {
+    display: none;
+  }
+  .dropdown {
+    display: none;
+  }
+  .selctA {
+    position: absolute;
+    left: 0;
+  }
+  .selectB {
+    display: none;
+  }
+  .input {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .el-icon-message-solid {
+    left: 0;
+  }
+  .icon {
+    left: 14px;
+  }
+  .el-icon-s-fold {
+    display: inline;
+    font-size: 40px;
+    position: absolute;
+    right: 0;
+    z-index: 1000;
+  }
+  .table {
+    width: 100%;
+  }
+  .draw {
+    z-index: 80000;
+  }
+  .inZeYafe {
+    left: 5%;
+    width: 340px;
+  }
+  .theNew {
+    width: 340px;
+  }
+  .AddMahlaka {
+    width: 340px;
+    left: -2%;
+  }
+}
 </style>
 <style>
 body {
   background: rgb(241, 226, 226);
   overflow-x: hidden;
+  overflow-y: hidden;
 }
 input::placeholder {
   text-align: right;
