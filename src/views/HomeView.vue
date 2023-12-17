@@ -5,6 +5,7 @@
     element-loading-text="Loading..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
+    ref="DIVOS"
     style="
       position: fixed;
       top: 0;
@@ -13,7 +14,6 @@
       height: 100%;
       z-index: 9999;
     "
-    ref="DIVOS"
   >
     <i class="el-icon-s-fold" @click="drawer = true"></i>
 
@@ -90,6 +90,18 @@
             >
           </el-row>
         </div>
+        <div
+          @click="
+            showZeYafe = true;
+            showManagers = true;
+            ManagA = true;
+          "
+        >
+          <el-row class="row">
+            <el-col :span="24"><i class="el-icon-s-custom"></i> מנהלים</el-col>
+          </el-row>
+        </div>
+
         <div v-for="n in 7" :key="n" @click="showZeYafe = true">
           <el-row class="row">
             <el-col :span="24">{{ `סתם ליופי -${n}` }}</el-col>
@@ -143,6 +155,13 @@
               size="mini"
               ><i class="el-icon-delete"></i
             ></el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="עדכון" v-if="!mehika">
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini" @click="updateOved(scope.row)"
+              ><i class="el-icon-edit"></i> עדכן עובד</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -281,6 +300,126 @@
             ></el-table-column>
             <el-table-column label="מנהל מחלקה" prop="Manger"></el-table-column>
           </el-table>
+          <div class="UpOv" v-show="showUPdateOved && showZeYafe">
+            <div class="pratimOFoved-title">פרטי עובד</div>
+            <div class="pratimOFoved">
+              <div>
+                שם עובד : <span class="HazeShelHanu">{{ UPoved.shem }}</span>
+              </div>
+              <div>
+                שם מחלקה :
+                <span class="HazeShelHanu">{{ UPoved.Department }}</span>
+              </div>
+              <div>
+                שם תפקיד :
+                <span class="HazeShelHanu">{{ UPoved.position }}</span>
+              </div>
+            </div>
+            <div class="borderbotoom"></div>
+            <div class="UPnew-title">עדכון</div>
+            <div class="UPnew">
+              <el-row class="UpOv-item">
+                <el-col :span="24">
+                  <el-input
+                    v-model="UPoved.shem"
+                    placeholder="שם"
+                    clearable
+                  ></el-input>
+                </el-col>
+              </el-row>
+              <el-row class="UpOv-item">
+                <el-col :span="24">
+                  <el-input
+                    clearable
+                    v-model="UPoved.position"
+                    placeholder="תפקיד"
+                    ref="pos"
+                  ></el-input>
+                </el-col>
+              </el-row>
+              <el-row class="UpOv-item">
+                <el-col :span="24">
+                  <el-select
+                    v-model="UPoved.Department"
+                    placeholder="מחלקה"
+                    class="selectC"
+                  >
+                    <el-option
+                      v-for="(d, i) in Department"
+                      :key="i"
+                      :value="d"
+                      class="selctC-item"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-col>
+              </el-row>
+            </div>
+            <el-button
+              type="success"
+              class="shmor"
+              :loading="loadingButton"
+              @click="UPDATEoved"
+              ref="buttonS"
+              >שמור</el-button
+            >
+            <el-button
+              type="danger"
+              class="sgor"
+              @click="
+                showUPdateOved = false;
+                showZeYafe = false;
+              "
+              >סגור</el-button
+            >
+          </div>
+          <div class="Managers">
+            <div v-show="showZeYafe && showManagers && ManagA" class="ManagA">
+              <el-table :data="netunim" class="tableManag">
+                <el-table-column
+                  label="שם המחלקה"
+                  prop="DepartmentName"
+                ></el-table-column>
+                <el-table-column
+                  label="מנהל מחלקה"
+                  prop="Manger"
+                ></el-table-column>
+                <el-table-column label="החלף מנהל">
+                  <template slot-scope="scope">
+                    <el-button
+                      type="primary"
+                      @click="switchManager(scope.row)"
+                      size="mini"
+                      >החלף</el-button
+                    >
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+            <div class="managB" v-show="showZeYafe && showManagers && ManagB">
+              <el-select
+                v-model="selcoz"
+                placeholder="בחר"
+                class="selectD"
+                @change="ManagC = true"
+              >
+                <el-option value="עובד קיים"></el-option>
+                <el-option value="מנהל חדש"></el-option>
+              </el-select>
+            </div>
+            <div
+              class="managC"
+              v-show="
+                showZeYafe && showManagers && ManagC && selcoz === 'עובד קיים'
+              "
+            ></div>
+            <div
+              class="managC"
+              v-show="
+                showZeYafe && showManagers && ManagC && selcoz === 'מנהל חדש'
+              "
+            ></div>
+          </div>
         </div>
       </transition>
     </div>
@@ -341,30 +480,75 @@ export default {
   data() {
     return {
       window,
-      NewUser: false,
       data: [],
       data2: [],
       serch: "",
       selcto: "שם עובד",
+      selcoz: "",
       netunim: [],
       ovedHadash: {
+        shem: "",
+        Departmento: "",
+        position: "",
+      },
+      UPoved: {
+        ID: "",
         shem: "",
         Department: "",
         position: "",
       },
       Department: [],
+      row: {},
       filterDeparment: "הכל",
+      shemhadash: "",
       mehika: false,
       loadingButton: false,
-      shemhadash: "",
+      drawer: false,
       showM: false,
+      NewUser: false,
       showZeYafe: false,
       shomes: false,
       showN: false,
-      drawer: false,
+      showUPdateOved: false,
+      showManagers: false,
+      ManagA: false,
+      ManagB: false,
+      ManagC: false,
     };
   },
   watch: {
+    ManagA(val) {
+      if (val) {
+        this.ManagB = false;
+        this.ManagC = false;
+      }
+    },
+    ManagB(val) {
+      if (val) {
+        this.ManagA = false;
+        this.ManagC = false;
+      }
+    },
+    ManagC(val) {
+      if (val) {
+        this.ManagB = false;
+        this.ManagA = false;
+      }
+    },
+
+    showManagers(val) {
+      if (!val) {
+        this.ManagA = false;
+        this.ManagB = false;
+        this.ManagC = false;
+      }
+    },
+    loadingButton(val) {
+      if (this.$refs.buttonS && val) {
+        let el = this.$refs.buttonS.$el;
+        el.style.position = "absolute";
+      }
+    },
     serch(val) {
       // this.data = this.data2;
       if (this.selcto === "שם עובד") {
@@ -396,23 +580,20 @@ export default {
         this.data = this.data2;
       }
     },
-    NewUser(val) {
-      if (val) {
-        this.showM = false;
-        this.showN = false;
-      }
+    NewUser(newValue) {
+      if (newValue) this.resetOthers("NewUser");
     },
-    showM(val) {
-      if (val) {
-        this.NewUser = false;
-        this.showN = false;
-      }
+    showM(newValue) {
+      if (newValue) this.resetOthers("showM");
     },
-    showN(val) {
-      if (val) {
-        this.NewUser = false;
-        this.showM = false;
-      }
+    showN(newValue) {
+      if (newValue) this.resetOthers("showN");
+    },
+    showUpdateOved(newValue) {
+      if (newValue) this.resetOthers("showUpdateOved");
+    },
+    showManagers(newValue) {
+      if (newValue) this.resetOthers("showManagers");
     },
   },
   computed: {
@@ -435,17 +616,22 @@ export default {
     selc.style.background = "rgba(255, 238, 225, 0.663)";
     let res = await this.$ax.get(URL + "Getnetunim");
     this.netunim = res.data;
-    this.shomes = true;
     this.$refs.DIVOS.style.zIndex = "";
     this.$refs.DIVOS.style.position = "absolute";
-
+    this.shomes = true;
     let D = await this.$ax.get(URL + "GetD");
     this.Department = D.data;
-    let ele = document.querySelector(".v-model");
-    console.log(ele);
   },
 
   methods: {
+    resetOthers(changedVar) {
+      ["showM", "showN", "showUpdateOved", "showManagers", "NewUser"].forEach(
+        (varName) => {
+          if (varName !== changedVar) this[varName] = false;
+        }
+      );
+    },
+
     filterDeparmentMET(val) {
       this.data = this.data2;
       this.data = this.data.filter((e) => {
@@ -461,6 +647,7 @@ export default {
       this.showM = false;
       this.showN = false;
       this.showZeYafe = true;
+      this.showupdateOved = false;
     },
     async AddOved() {
       if (
@@ -544,6 +731,42 @@ export default {
         }
       }
     },
+    updateOved(row) {
+      this.UPoved.shem = row.Name;
+      this.UPoved.Department = row.DepartmentName;
+      this.UPoved.position = row.Position;
+      this.UPoved.ID = row.EmployeeID;
+      this.row = row;
+      this.showZeYafe = true;
+      this.showUPdateOved = true;
+    },
+    async UPDATEoved() {
+      this.loadingButton = true;
+      if (
+        this.UPoved.shem &&
+        this.UPoved.Department &&
+        this.UPoved.position &&
+        this.UPoved.ID
+      ) {
+        let { data } = await this.$ax.put(URL + "UPovedos", this.UPoved);
+        console.log(data);
+        if (data) {
+          this.loadingButton = false;
+          this.$message.success("העובד עודכן בהצלחה");
+          this.window.location.reload();
+        } else {
+          this.$message.error("משהו נכשל");
+          this.loadingButton = false;
+        }
+      } else {
+        this.$message.error("לא מלאת הכל");
+      }
+    },
+    switchManager(row) {
+      console.log(row);
+      this.ManagB = true;
+      this.row = row;
+    },
   },
 };
 </script>
@@ -579,8 +802,8 @@ body {
   padding: 5px;
 }
 .table {
-  width: 84.3%;
-  /* width: 30%; */
+  width: 78%;
+  margin-left: 50px;
   position: absolute;
   left: 0;
   top: 81px;
@@ -689,7 +912,7 @@ body {
 .smotDEPARTMENT {
   position: relative;
   top: 33px;
-  float: right;
+  float: center;
 }
 .depart-item {
   margin-bottom: 10px;
@@ -736,7 +959,8 @@ body {
 .tze {
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 25%;
+  width: 300px;
 }
 .Depart {
   /* position: absolute;
@@ -812,15 +1036,17 @@ body {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.708);
-  z-index: 1200;
+  z-index: 800;
+  /* z-index: 1200; */
 }
 .inZeYafe {
   width: 600px;
   height: 410px;
-  background: rgb(255, 255, 255);
+  /* background: rgb(255, 255, 255); */
   position: absolute;
   left: 30%;
   top: 20%;
+  border-radius: 30px;
 }
 .expand-enter-active {
   animation: expandAnimation 2s;
@@ -870,6 +1096,86 @@ body {
   top: 40px;
   right: 0;
   width: 270px;
+}
+.UpOv {
+  width: 561px;
+  height: 370px;
+  background: rgba(123, 167, 89, 0.786);
+  padding: 10px;
+  border: 20px solid rgb(109, 109, 234);
+  border-radius: 20px;
+}
+.UpOv-item {
+  /* margin-bottom: 8px; */
+  width: 200px;
+  margin-left: 10px;
+  float: right;
+}
+.selectC {
+  width: 100px;
+  position: absolute;
+  left: -320px;
+  bottom: 0;
+}
+.UPnew {
+  position: relative;
+  top: 100px;
+}
+.UPnew-title {
+  position: absolute;
+  top: 180px;
+  left: 45%;
+  font-size: 30px;
+  border-bottom: 2px solid black;
+  border-width: 100%;
+}
+.borderbotoom {
+  border-bottom: 3px solid black;
+  margin-top: 20px;
+}
+.pratimOFoved {
+  font-size: 25px;
+  text-align: right;
+}
+.pratimOFoved-title {
+  border-bottom: 3px solid black;
+  font-size: 25px;
+  text-align: center;
+}
+.HazeShelHanu {
+  border-bottom: 4px solid red;
+}
+.shmor {
+  position: absolute;
+  left: 4%;
+  bottom: 20px;
+  width: 45.7%;
+}
+.sgor {
+  position: absolute;
+  right: 3%;
+  bottom: 20px;
+  width: 45.7%;
+}
+.Managers {
+  position: absolute;
+  width: 561px;
+  height: 370px;
+  background: rgba(163, 112, 36, 0.786);
+  padding: 10px;
+  border: 20px solid rgb(109, 109, 234);
+  border-radius: 20px;
+}
+.tableManag {
+  height: 330px;
+  overflow-y: auto;
+}
+.selectD {
+  position: absolute;
+  top: 40%;
+  left: 16%;
+  width: 400px;
+  height: 60px;
 }
 @media screen and (max-width: 400px) {
   .hazeshebatzad {
@@ -938,6 +1244,9 @@ body {
   overflow-y: hidden;
 }
 input::placeholder {
+  text-align: right;
+}
+input {
   text-align: right;
 }
 </style>
