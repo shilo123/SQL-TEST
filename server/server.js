@@ -73,15 +73,15 @@ app.get("/", async (req, res) => {
   }
 });
 app.get("/Getnetunim", async (req, res) => {
-  let q = `SELECT COUNT(ovdim.Name) AS TOTAL,Department.DepartmentName, Managers.Name AS Manger
+  let q = `SELECT COUNT(ovdim.Name) AS TOTAL,Department.DepartmentName, Managers.Name AS Manger ,Managers.EmployeeID AS ID
   FROM ovdim 
   JOIN Department  ON ovdim.DepartmentID = Department.DepartmentID 
   LEFT JOIN ovdim AS Managers ON Department.ManagerID = Managers.EmployeeID
-  GROUP BY Department.DepartmentName,Managers.Name  ORDER BY TOTAL DESC
+  GROUP BY Department.DepartmentName,Managers.Name,Managers.EmployeeID  ORDER BY TOTAL DESC
   `;
 
   let result = await SQL(q);
-  // console.log(result);
+  console.log(result);
   res.json(result);
 });
 app.get("/GetD", async (req, res) => {
@@ -133,7 +133,7 @@ app.post("/AddDepartment", async (req, res) => {
   }
 });
 app.put("/UPovedos", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const query = `SELECT DepartmentID FROM Department WHERE DepartmentName = '${req.body.Department}'`;
     let id = await SQL(query);
@@ -145,6 +145,15 @@ app.put("/UPovedos", async (req, res) => {
     WHERE EmployeeID = ${req.body.ID};
     `;
     await SQL(q);
+    res.json(true);
+  } catch (error) {
+    res.json(false);
+  }
+});
+app.post("/NewManager", async (req, res) => {
+  try {
+    console.log(req.body);
+    // const query = `SELECT Name FROM ovdim WHERE Name =`;
     res.json(true);
   } catch (error) {
     res.json(false);

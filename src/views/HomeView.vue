@@ -16,6 +16,13 @@
     "
   >
     <i class="el-icon-s-fold" @click="drawer = true"></i>
+    <el-button
+      v-if="mehika"
+      type="primary"
+      class="buttonOfBackOfPhone"
+      @click="mehika = false"
+      >חזור</el-button
+    >
 
     <el-input
       v-model="serch"
@@ -373,7 +380,7 @@
               >סגור</el-button
             >
           </div>
-          <div class="Managers">
+          <div class="Managers" v-show="showZeYafe && showManagers">
             <div v-show="showZeYafe && showManagers && ManagA" class="ManagA">
               <el-table :data="netunim" class="tableManag">
                 <el-table-column
@@ -412,13 +419,29 @@
               v-show="
                 showZeYafe && showManagers && ManagC && selcoz === 'עובד קיים'
               "
-            ></div>
+            >
+              <el-table :data="coputedData" height="350">
+                <el-table-column label="שם עובד" prop="Name"></el-table-column>
+                <el-table-column label="בחר">
+                  <template slot-scope="scope">
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      @click="NewManager(scope.row)"
+                      >בחר</el-button
+                    >
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
             <div
               class="managC"
               v-show="
                 showZeYafe && showManagers && ManagC && selcoz === 'מנהל חדש'
               "
-            ></div>
+            >
+              חדש
+            </div>
           </div>
         </div>
       </transition>
@@ -456,7 +479,6 @@
           @click="
             showN = true;
             showZeYafe = true;
-            drawer = false;
           "
         >
           <el-row class="row">
@@ -465,12 +487,25 @@
             >
           </el-row>
         </div>
+        <div
+          @click="
+            showZeYafe = true;
+            showManagers = true;
+            ManagA = true;
+          "
+        >
+          <el-row class="row">
+            <el-col :span="24"><i class="el-icon-s-custom"></i> מנהלים</el-col>
+          </el-row>
+        </div>
+
         <div v-for="n in 7" :key="n" @click="showZeYafe = true">
           <el-row class="row">
             <el-col :span="24">{{ `סתם ליופי -${n}` }}</el-col>
           </el-row>
         </div>
       </div>
+      <!-- </div> -->
     </el-drawer>
   </div>
 </template>
@@ -535,7 +570,6 @@ export default {
         this.ManagA = false;
       }
     },
-
     showManagers(val) {
       if (!val) {
         this.ManagA = false;
@@ -580,6 +614,17 @@ export default {
         this.data = this.data2;
       }
     },
+    drawer(newValue) {
+      if (newValue) {
+        this.resetOthers("drawer");
+        this.NewUser = false;
+        this.showM = false;
+        this.showN = false;
+        this.showUpdateOved = false;
+        this.showManagers = false;
+      } else {
+      }
+    },
     NewUser(newValue) {
       if (newValue) this.resetOthers("NewUser");
     },
@@ -599,6 +644,11 @@ export default {
   computed: {
     pleace() {
       return `סנן לפי ${this.selcto}...`;
+    },
+    coputedData() {
+      return this.data.filter(
+        (e) => this.row.DepartmentName === e.DepartmentName
+      );
     },
   },
   async mounted() {
@@ -625,13 +675,17 @@ export default {
 
   methods: {
     resetOthers(changedVar) {
-      ["showM", "showN", "showUpdateOved", "showManagers", "NewUser"].forEach(
-        (varName) => {
-          if (varName !== changedVar) this[varName] = false;
-        }
-      );
+      [
+        "showM",
+        "showN",
+        "showUpdateOved",
+        "showManagers",
+        "NewUser",
+        "drawer",
+      ].forEach((varName) => {
+        if (varName !== changedVar) this[varName] = false;
+      });
     },
-
     filterDeparmentMET(val) {
       this.data = this.data2;
       this.data = this.data.filter((e) => {
@@ -766,6 +820,14 @@ export default {
       console.log(row);
       this.ManagB = true;
       this.row = row;
+    },
+    async NewManager(row) {
+      console.log(row);
+      let { data } = await this.$ax.post(URL + "NewManager", {
+        beforManager: this.row,
+        newManager: row,
+      });
+      console.log(data);
     },
   },
 };
@@ -1177,6 +1239,9 @@ body {
   width: 400px;
   height: 60px;
 }
+.buttonOfBackOfPhone {
+  display: none;
+}
 @media screen and (max-width: 400px) {
   .hazeshebatzad {
     display: none;
@@ -1219,7 +1284,12 @@ body {
     z-index: 1000;
   }
   .table {
-    width: 100%;
+    width: 99.4%;
+    position: absolute;
+    left: -49.9px;
+  }
+  .tze {
+    display: none;
   }
   .draw {
     z-index: 80000;
@@ -1232,8 +1302,20 @@ body {
     width: 340px;
   }
   .AddMahlaka {
-    width: 340px;
+    width: 320px;
     left: -2%;
+  }
+  .inputicatica {
+    position: relative;
+    right: 5px;
+  }
+  .buttonOfBackOfPhone {
+    display: inline;
+    position: absolute;
+    top: 0;
+    left: 22%;
+    z-index: 3000;
+    width: 200px;
   }
 }
 </style>
